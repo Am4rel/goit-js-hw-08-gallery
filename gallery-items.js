@@ -1,4 +1,6 @@
-export default [
+let imgList = [];
+
+export default imgList = [
   {
     preview:
       'https://cdn.pixabay.com/photo/2019/05/14/16/43/himilayan-blue-poppy-4202825__340.jpg',
@@ -63,3 +65,106 @@ export default [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const gallery = document.querySelector("ul.gallery.js-gallery");
+const modal = document.querySelector("div.lightbox.js-lightbox");
+const modalImg = document.querySelector("img.lightbox__image");
+let activeImg;
+let activeListItem;
+
+let stringHTML = "";
+imgList.forEach(e => {
+  return stringHTML += `<li class="gallery__item"><a class="gallery__link" href="${e.original}"><img class="gallery__image" src="${e.preview}" data-source="${e.original}" alt="${e.description}"/></a></li>`  
+});
+
+document.querySelector(".gallery.js-gallery").innerHTML = stringHTML;
+
+gallery.addEventListener("click", clickOnGalleryEl)
+
+modal.addEventListener("click", closeModalClick);
+
+window.addEventListener ("keydown", closeModalEsc)
+
+window.addEventListener("keydown", changeModalImageWithArrowBtns)
+
+function clickOnGalleryEl(event) {
+  event.preventDefault()
+  if (event.target.classList.contains("gallery__image")) {
+    activeImg = event.target;
+    activeListItem = activeImg.closest(".gallery__item");
+
+    openModal()
+  }
+}
+
+function closeModalClick(event) {
+  let target = event.target;
+  let targetClassList = target.classList;
+
+  if (targetClassList.contains("lightbox__overlay") || targetClassList.contains("lightbox__button")){
+    closeModal()
+  };
+}
+
+function closeModalEsc(event) {
+  let keyPressed = event.code;
+  
+  if (keyPressed === "Escape" && modal.classList.contains("is-open")) {
+    closeModal()
+  };
+}
+
+function changeModalImageWithArrowBtns(event) {
+  let keyPressed = event.code;
+  
+  if (modal.classList.contains("is-open") && keyPressed === "ArrowLeft") {
+    setPrevImgActive();
+  } else if (modal.classList.contains("is-open") && keyPressed === "ArrowRight") {
+    setNextImgActive();
+  }
+}
+
+function closeModal() {
+  modal.classList.remove("is-open");
+  remoreModalImg();
+}
+
+function openModal() {
+  modal.classList.add("is-open");
+  setModalImg();
+}
+
+function setModalImg() {
+  modalImg.src = activeImg.dataset.source;
+  modalImg.alt = activeImg.alt; 
+}
+
+function remoreModalImg() {
+  modalImg.src = "";
+  modalImg.alt = "";
+  activeImg = "";
+}
+
+function setPrevImgActive() {
+  if (activeListItem.previousSibling) {
+    activeListItem = activeListItem.previousSibling;
+    activeImg = activeListItem.querySelector(".gallery__image");
+    setModalImg();
+  } else {
+    activeListItem = gallery.lastChild;
+    activeImg = activeListItem.querySelector(".gallery__image");
+    setModalImg();
+  }
+}
+
+function setNextImgActive() {
+  if (activeListItem.nextSibling) {
+    activeListItem = activeListItem.nextSibling;
+    activeImg = activeListItem.querySelector(".gallery__image");
+    setModalImg();
+  } else {
+    activeListItem = gallery.firstChild;
+    activeImg = activeListItem.querySelector(".gallery__image");
+    setModalImg();
+  }
+}
