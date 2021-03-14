@@ -117,16 +117,16 @@ function closeModalEsc(event) {
 function changeModalImageWithArrowBtns(event) {
   let keyPressed = event.code;
   
-  if (modal.classList.contains("is-open") && keyPressed === "ArrowLeft") {
-    setPrevImgActive();
-  } else if (modal.classList.contains("is-open") && keyPressed === "ArrowRight") {
-    setNextImgActive();
+  if (modal.classList.contains("is-open") && (keyPressed === "ArrowLeft" || keyPressed === "ArrowRight")) {
+    setNewImgActive(keyPressed);
   }
 }
 
 function closeModal() {
   modal.classList.remove("is-open");
-  remoreModalImg();
+  modalImg.src = "";
+  modalImg.alt = "";
+  activeImg = "";
 }
 
 function openModal() {
@@ -139,32 +139,26 @@ function setModalImg() {
   modalImg.alt = activeImg.alt; 
 }
 
-function remoreModalImg() {
-  modalImg.src = "";
-  modalImg.alt = "";
-  activeImg = "";
-}
-
-function setPrevImgActive() {
-  if (activeListItem.previousSibling) {
-    activeListItem = activeListItem.previousSibling;
-    activeImg = activeListItem.querySelector(".gallery__image");
-    setModalImg();
-  } else {
-    activeListItem = gallery.lastChild;
-    activeImg = activeListItem.querySelector(".gallery__image");
-    setModalImg();
-  }
-}
-
-function setNextImgActive() {
-  if (activeListItem.nextSibling) {
-    activeListItem = activeListItem.nextSibling;
-    activeImg = activeListItem.querySelector(".gallery__image");
-    setModalImg();
-  } else {
-    activeListItem = gallery.firstChild;
-    activeImg = activeListItem.querySelector(".gallery__image");
-    setModalImg();
+function setNewImgActive(theWay) {
+  if (theWay === "ArrowLeft") {
+    if (activeListItem.previousSibling) {
+      activeListItem = activeListItem.previousSibling;
+      activeImg = activeListItem.querySelector(".gallery__image");
+      setModalImg();
+    } else {
+      activeListItem = gallery.lastChild;
+      activeImg = activeListItem.querySelector(".gallery__image");
+      setModalImg();
+    }
+  } else if (theWay === "ArrowRight") {
+    if (activeListItem.nextSibling) {
+      activeListItem = activeListItem.nextSibling;
+      activeImg = activeListItem.querySelector(".gallery__image");
+      setModalImg();
+    } else {
+      activeListItem = gallery.firstChild;
+      activeImg = activeListItem.querySelector(".gallery__image");
+      setModalImg();
+    } 
   }
 }
